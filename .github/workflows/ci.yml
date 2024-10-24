@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [18.x, 20.x, 22.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -24,4 +24,5 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - run: cd ./server && npm install && npm i -g @nestjs/cli && npm run test && ls -la
+      - run: cd ./server && npm install
+      - run: npm i -g @nestjs/cli && npm config set user 0 && npm config set unsafe-perm true && npm run test
