@@ -1,5 +1,5 @@
 ---
-name: Lint
+name: Node.js CI
 
 on: 
   push:
@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-    name: Lint
     runs-on: ubuntu-latest
 
     steps:
