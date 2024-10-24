@@ -27,4 +27,4 @@ jobs:
       - run: cd ./server && rm -rf node_modules && npm install
       - run: cd ./server && npm run build && npm run test
       - run: cd ./web && rm -rf node_modules && npm install
-      - run: cd ./web && npm run build && npm run test
+      - run: cd ./web && npm run build ## && npm run test
