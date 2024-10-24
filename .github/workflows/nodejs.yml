@@ -17,6 +17,7 @@ jobs:
           node-version: 16
       - name: Run install, build, test
         run: |
+          cd server
           npm install
           npm run build
           npm run test
