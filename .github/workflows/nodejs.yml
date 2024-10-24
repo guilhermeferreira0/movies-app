@@ -10,25 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
-          # super-linter needs the full git history to get the
-          # list of files that changed across commits
-          fetch-depth: 0
-
-      - name: Super-linter
-        uses: super-linter/super-linter@v7.1.0
-        env:
-          # To report GitHub Actions status checks
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Node Test
-        - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - run: npm ci
-      - run: npm test
-      - run: npm run build
-
-      
+          node-version: 16
+      - name: Run install, build, test
+        run: |
+          cd server
+          sudo rm -rf node_modules
+          npm install
+          npm config set user 0
+          npm config set unsafe-perm true
+          npm i -g @nestjs/cli
+          npm run build
+          npm run test
