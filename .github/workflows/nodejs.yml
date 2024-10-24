@@ -3,9 +3,13 @@ name: Node.js CI
 
 on: 
   push: 
-    ["master", "main"]
+    branches:
+      - master
+      - develop
   pull_request: 
-    ["master", "main"]
+    brancher:
+      - master
+      - develop
 
 jobs:
   build:
