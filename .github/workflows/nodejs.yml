@@ -18,7 +18,10 @@ jobs:
       - name: Run install, build, test
         run: |
           cd server
+          sudo rm -rf node_modules
           npm install
+          npm config set user 0
+          npm config set unsafe-perm true
           npm i -g @nestjs/cli
           npm run build
           npm run test
