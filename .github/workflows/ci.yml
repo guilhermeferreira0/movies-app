@@ -25,4 +25,4 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: cd ./server && rm -rf node_modules && npm install
-      - run: ls -la
+      - run: cd ./server && npm run build && npm run test
