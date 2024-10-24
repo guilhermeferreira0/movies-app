@@ -7,7 +7,7 @@ async function bootstrap() {
   const MODE = process.env.NODE_ENV;
   
   await app.listen(PORT, () => {
-    console.log(`Running API in MODE: ${MODE} on PORT: ${PORT}`)
+    console.log(`Running API in MODE : ${MODE} on PORT: ${PORT}`)
   });
 }
 bootstrap();
