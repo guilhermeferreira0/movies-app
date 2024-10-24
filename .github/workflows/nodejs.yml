@@ -19,5 +19,6 @@ jobs:
         run: |
           cd server
           npm install
+          npm i -g @nestjs/cli
           npm run build
           npm run test
