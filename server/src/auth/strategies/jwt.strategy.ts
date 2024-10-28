@@ -1,32 +1,30 @@
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { Request } from "express";
+import { JwtService } from "@nestjs/jwt";
 
-  // function cookieExtractor(req: Request) {
-  //   let token = null;
-  //   if (req && req.cookies) {
-  //     token = req.cookies['access_token']
-  //   }
-  //   return token;
-  // }
+function cookieExtractor(req: Request) {
+  const token = req.headers['authorization'] || null;
+  if (!token) throw new UnauthorizedException('Token ');
+  
+  return token.replace('Bearer', '').trim();
+}
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor() {
+  constructor(private readonly jwtService: JwtService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: 'secretkeyjwt'
+      jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+      secretOrKey: process.env.JWT_SECRET || 'secret',
     });
   }
 
-  async validate(req: Request, payload: any) {
-    const refreshToken = req?.get('authorization')?.replace('Bearer ', '').trim();
-    if (!refreshToken) throw new ForbiddenException('Refresh token invalid');
+  async validate(payload: any) {
 
     return {
-      ...payload,
-      refreshToken
+      userId: payload.userId,
+      email: payload.email
     }
   }
 }

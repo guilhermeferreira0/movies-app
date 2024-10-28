@@ -8,19 +8,19 @@ import { Response } from 'express';
 export class AuthService {
   constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
-  async generateTokens(userId: number, email: string) {
-    const [accessToken, refreshToken] = await Promise.all([
+  private async generateTokens(userId: number, email: string) {
+    const [refreshToken, accessToken] = await Promise.all([
       this.jwtService.signAsync({userId, email}, {
         expiresIn: 60 * 60 * 24,
-        secret: 'secretkeyjwt'
+        secret: process.env.JWT_SECRET || 'secret',
       }),
       this.jwtService.signAsync({userId, email}, {
-        expiresIn: 60 * 1,
-        secret: 'secretkeyjwt'
+        expiresIn: 60 * 60 * 2,
+        secret: process.env.JWT_SECRET || 'secret' 
       }),
     ])
 
-    return { accessToken, refreshToken };
+    return { refreshToken, accessToken };
   }
 
   async validateUser(loginAuthDto: LoginAuthDto) {
@@ -32,11 +32,13 @@ export class AuthService {
   }
   
   async loginUser(userId: number, email: string, res: Response) {
-    const { accessToken, refreshToken } = await this.generateTokens(userId, email);
+    const { refreshToken, accessToken } = await this.generateTokens(userId, email);
 
-      res.cookie('access_token', accessToken, {
+      // Setting cookie httponly
+      res.cookie('refresh_token', refreshToken, {
         expires: new Date(new Date().getTime()+5*60*1000), 
-        httpOnly: true
+        httpOnly: true,
+        secure: process.env.NODE_ENV == 'production',
       });
 
       return {
@@ -44,15 +46,37 @@ export class AuthService {
           userId,
           email,
         },
-        token: refreshToken,
+        accessToken: accessToken,
       };
   }
 
   signinLocal() {}
 
-  logout() {
-    return 'LOGOUT'
+  logout(req: Request, res: Response) {
+    res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
+
+    return res.json({
+      message: 'successfully',
+      successfull: true,
+    });
   }
 
-  refreshToken() {}
+  async refreshAccessToken(refreshToken: string) {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: process.env.JWT_SECRET || 'secret',
+      });
+
+      const newAccessToken = this.jwtService.sign({ userId: payload.userId, email: payload.email }, {
+        secret: process.env.JWT_SECRET || 'secret',
+      });
+
+      return { 
+        accessToken: newAccessToken,
+      }
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
 }

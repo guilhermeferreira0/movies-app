@@ -10,10 +10,9 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('/signup')
   @HttpCode(HttpStatus.CREATED)
-  async signupLocal(@Request() req, @Response() res) {
+  async signupLocal(@Request() req: any, @Response() res: any) {
     const user = await this.authService.loginUser(req.user.id, req.user.email, res);
-    console.log(user);
-    return { message: 'a' };
+    return res.json(user);
   }
 
   @Get('/signin')
@@ -25,12 +24,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('/logout')
   @HttpCode(HttpStatus.OK)
-  logout(@Request() req: Request) {
-    return this.authService.logout();
+  logout(@Request() req: any, @Response() res: any) {
+    return this.authService.logout(req ,res);
   }
 
-  @Post('/refresh')
-  refreshToken() {
-    return this.authService.refreshToken();
+  @Get('/refresh')
+  @HttpCode(HttpStatus.CREATED)
+  refreshToken(@Request() req: any) {
+    const refreshToken = req.cookies['refresh_token'];
+    return this.authService.refreshAccessToken(refreshToken);
   }
 }

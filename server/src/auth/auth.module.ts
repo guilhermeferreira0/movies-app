@@ -12,7 +12,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     UsersModule,
     PassportModule,
     JwtModule.register({
-      secret: 'ssss',
+      secret: process.env.JWT_SECRET,
     })
   ],
   controllers: [AuthController],
