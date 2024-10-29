@@ -45,7 +45,7 @@ Frontend
 
 ```bash
   cd web
-  docker-compose up -d --build 
+  npm run start
 ```
 
 #### Ambiente de Produção
@@ -62,7 +62,8 @@ Frontend
 
 ```bash
   cd web
-  docker-compose -f docker-compose.prod.yml up -d --build
+  docker build -f Dockerfile.prod -t angular:latest .
+  docker run --rm -d -p 8080:80 --name web-app angular:latest
 ```
 ## Contribuindo
 
