@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: angular-web
+spec:
+  selector:
+    matchLabels:
+      app: angular-web
+  template:
+    metadata:
+      labels:
+        app: angular-web
+    spec:
+      containers:
+      - name: angular-web
+        # image: app-angular:latest
+        ports:
+        - containerPort: 80
